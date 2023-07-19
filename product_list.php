@@ -109,6 +109,8 @@
                         <th>Adet</th>
                         <th>Fiyat</th>
                         <th>Toplam Fiyat</th>
+                        <th>İşlemler</th>
+
                     </tr>
                 </thead>
                 <tbody id="tbody"></tbody>
@@ -139,6 +141,7 @@
                         table += "<td>" + product.basket_quantity + "</td>";
                         table += "<td>" + product.price + "</td>";
                         table += "<td>" + product.total_price + "</td>";
+                        table += "<td>" + product.total_price + "</td>"; //Eksiltme işlemi gelecek 
                         table += "</tr>";
                     }
                     $('#tbody').append(table);
@@ -175,6 +178,7 @@
                                 table1 += "<td>" + products[i].basket_quantity + "</td>";
                                 table1 += "<td>" + products[i].price + "</td>";
                                 table1 += "<td>" + products[i].total_price + "</td>";
+                                table1 += "<td>" + products[i].total_price + "</td>"; // Eksiltme işlemi gelecek.
                                 table1 += "</tr>";
                             };
 
@@ -185,7 +189,6 @@
                         tbodyElement.innerHTML = "";
 
                         tbodyElement.innerHTML = table1;
-
 
                     }
 
