@@ -1,14 +1,26 @@
 <?php
+require_once("db_connection.php");
+
 // Sanitize and validate user input
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['customerID'], $_POST['productID'])) {
+    if (isset($_POST['customerID']) && isset($_POST['productID'])) {
         $customerID = $_POST['customerID'];
         $productID = $_POST['productID'];
 
         try {
-            require_once("db_connection.php");
             $basketsql = new BasketSQL($conn);
             $basketsql->updateBasket($customerID, $productID);
+            $basketsql->productDetails($customerID);
+        } catch (PDOException $e) {
+            // Handle the database connection or query error here.
+            // You may log the error or display a user-friendly message.
+            echo "Error: " . $e->getMessage();
+        }
+    } elseif (isset($_POST['customerID'])) {
+        try {
+            $customerID = $_POST['customerID'];
+            $basketsql = new BasketSQL($conn);
+            $basketsql->productDetails($customerID);
         } catch (PDOException $e) {
             // Handle the database connection or query error here.
             // You may log the error or display a user-friendly message.
@@ -38,9 +50,10 @@ class BasketSQL
         $stmt->execute();
 
         if ($stmt->rowCount() === 0) {
-            // No row was updated, meaning the record doesn't exist, so we insert it.
+            //No row was updated, meaning the record doesn't exist, so we insert it.
             $this->insertBasket($customerID, $productID, $price);
         }
+        return;
     }
 
     private function getProductPrice($productID)
@@ -82,6 +95,6 @@ class BasketSQL
         $stmt->execute();
 
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $results;
+        echo json_encode($results);
     }
 }

@@ -1,8 +1,4 @@
-<?php
-require('basket_sql.php');
-require('product_sql.php');
-?>
-
+<?php require('product_sql.php'); ?>
 <!DOCTYPE html>
 <html>
 
@@ -67,6 +63,10 @@ require('product_sql.php');
 </head>
 
 <body>
+    <div> <!-- Getting customerID from Session -->
+        <?php $customerID = $_SESSION['customerID']; ?>
+        <div id="customer_id" data-id="<?php echo $customerID; ?>"></div>
+    </div>
     <div class="container">
         <div class="product-list">
             <h2>Ürünler</h2>
@@ -82,9 +82,9 @@ require('product_sql.php');
                 </thead>
                 <tbody>
                     <?php
+                    //Getting products from db  
                     $productl = new productSQL();
                     $products = $productl->listProduct();
-
 
                     foreach ($products as $product) :
                     ?>
@@ -111,26 +111,42 @@ require('product_sql.php');
                         <th>Toplam Fiyat</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php $customerID = $_SESSION['customerID']; ?>
-                    <div id="customer_id" data-id="<?php echo $customerID; ?>"></div>
-                    <?php
-                    $basket = new BasketSQL($conn);
-                    $basketProducts = $basket->productDetails($customerID);
-                    foreach ($basketProducts as $basketProd) : ?>
-                        <tr>
-                            <td><?php echo $basketProd['product_name'] ?></td>
-                            <td><?php echo $basketProd['brand_name'] ?></td>
-                            <td><?php echo $basketProd['basket_quantity'] ?></td>
-                            <td><?php echo $basketProd['price'] ?></td>
-                            <td><?php echo $basketProd['total_price'] ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
+                <tbody id="tbody"></tbody>
             </table>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script>
+        // Gets basket products while system loading 
+        $(document).ready(function() {
+
+            var customerID = $('#customer_id').data('id');
+            $.ajax({
+                url: "http://localhost/website/basket_sql.php",
+                data: {
+                    customerID: customerID
+                }, // Sending the customerID as an object
+                type: "POST",
+                success: function(result) {
+                    var products = JSON.parse(result);
+                    var table;
+
+                    for (var i = 0; i < products.length; i++) {
+                        var product = products[i];
+                        table += "<tr>";
+                        table += "<td>" + product.product_name + "</td>";
+                        table += "<td>" + product.brand_name + "</td>";
+                        table += "<td>" + product.basket_quantity + "</td>";
+                        table += "<td>" + product.price + "</td>";
+                        table += "<td>" + product.total_price + "</td>";
+                        table += "</tr>";
+                    }
+                    $('#tbody').append(table);
+                },
+
+            });
+        });
+    </script>
     <script>
         $(document).ready(function() {
             $('.add-to-cart').on('click', function() {
@@ -144,11 +160,41 @@ require('product_sql.php');
                     url: "http://localhost/website/basket_sql.php",
                     data: data,
                     type: "POST",
+                    success: function(result2) {
+
+                        var products = JSON.parse(result2);
+
+                        // Solution of undefined mistake
+                        var table1 = "";
+
+                        for (var i = 0; i < products.length; i++) {
+                            {
+                                table1 += "<tr>";
+                                table1 += "<td>" + products[i].product_name + "</td>";
+                                table1 += "<td>" + products[i].brand_name + "</td>";
+                                table1 += "<td>" + products[i].basket_quantity + "</td>";
+                                table1 += "<td>" + products[i].price + "</td>";
+                                table1 += "<td>" + products[i].total_price + "</td>";
+                                table1 += "</tr>";
+                            };
+
+                        }
+
+                        var tbodyElement = document.getElementById("tbody");
+
+                        tbodyElement.innerHTML = "";
+
+                        tbodyElement.innerHTML = table1;
+
+
+                    }
 
                 });
             });
         });
     </script>
+
+
 
 </body>
 
