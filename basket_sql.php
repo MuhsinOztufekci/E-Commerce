@@ -50,33 +50,36 @@ class BasketSQL
     {
         $this->conn = $conn;
     }
-
     public function updateBasket($customerID, $productID, $change)
     {
+        // Get product information
         $productPrice = $this->getProductPrice($productID);
-        $productQuantity = $this->productStockCheckker($productID);
+        $productQuantity = $this->productStockChecker($productID);
+
+        // Get basket item if it exists
         $basketItem = $this->getBasketItem($customerID, $productID);
-
-        //Before the insert, update checks the conditions.
-
-        if ($productQuantity <= 0 || $basketItem['basket_quantity'] + $change >= 20 || $basketItem['basket_quantity'] + $change <= 0 || $productQuantity < $basketItem['basket_quantity'] + $change) {
-            return false;
-        }
-
-        $newQuantity = $basketItem['basket_quantity'] + $change;
-        $newQuantity = max($newQuantity, 1);
-
         if (!$basketItem) {
             // Basket item does not exist, insert new row
             $this->insertBasket($customerID, $productID, $productPrice);
+
+            return true;
         } else {
+            $currentQuantity = $basketItem['basket_quantity']; // Fetch the current quantity from the basketItem
+
+            // İf NewQuantity lower than 1 then NewQuantity 1
+            $newQuantity = max($currentQuantity + $change, 1);
+            // İf NewQuantity upper than 20 then NewQuantity is $currentQuantity + $change
+
+            if ($productQuantity <= 0 || $productQuantity < $newQuantity || $currentQuantity + $change > 20) {
+                return false;
+            }
+
             // Basket item exists, update quantity and total_price
             $this->updateExistingBasket($customerID, $productID, $newQuantity, $productPrice);
         }
 
         return true;
     }
-
 
     private function getBasketItem($customerID, $productID)
     {
@@ -89,8 +92,7 @@ class BasketSQL
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-
-    private function productStockCheckker($productID)
+    private function productStockChecker($productID)
     {
         $sql = "SELECT quantity FROM products WHERE id = :id";
 
@@ -104,9 +106,9 @@ class BasketSQL
 
     private function updateExistingBasket($customerID, $productID, $newQuantity, $price)
     {
-        $sql = "UPDATE basket SET basket_quantity = :new_quantity, total_price = :total_price WHERE customer_id = :customer_id AND product_id = :product_id";
-
         $totalPrice = $newQuantity * $price;
+
+        $sql = "UPDATE basket SET basket_quantity = :new_quantity, total_price = :total_price WHERE customer_id = :customer_id AND product_id = :product_id";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':new_quantity', $newQuantity);
@@ -115,7 +117,6 @@ class BasketSQL
         $stmt->bindParam(':product_id', $productID);
         $stmt->execute();
     }
-
 
     public function totalPrice($customerID)
     {

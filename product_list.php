@@ -183,7 +183,7 @@
         <div class="cart">
             <div class="clear-cart-container">
                 <h2 class="cart-heading">Sepetim</h2>
-                <button class="clear-cart-button" onclick="clearAll()" id="clearAll">Clear Cart</button>
+                <button class="clear-cart-button" id="clearAll">Clear Cart</button>
             </div>
 
             <table>
@@ -258,7 +258,6 @@
                     type: "POST",
                     success: function(result) {
                         var products = JSON.parse(result);
-
                         var table1 = "";
 
                         for (var i = 0; i < products.length; i++) {
@@ -274,7 +273,6 @@
                         }
 
                         var tbodyElement = document.getElementById("tbody");
-
                         tbodyElement.innerHTML = table1;
                     }
                 });
@@ -283,30 +281,28 @@
 
         <!-- Belongs to Clear Basket button   -->
         <script>
-            function clearAll() {
-                $("#clearAll").click(function() {
-                    var customerID = $('#customer_id').data('id');
-                    var islem = "clearAll";
-                    var data = {
-                        customerID: customerID,
-                        islem: islem
-                    };
+            $("#clearAll").click(function() {
+                var customerID = $('#customer_id').data('id');
+                var islem = "clearAll";
+                var data = {
+                    customerID: customerID,
+                    islem: islem
+                };
 
-                    $.ajax({
-                        url: "http://localhost/website/basket_sql.php",
-                        data: data,
-                        type: "POST",
-                        success: function(result) {
-                            var tbodyElement = document.getElementById("tbody");
-                            tbodyElement.innerHTML = "";
-                        },
-                        error: function(xhr, status, error) {
-                            // Handle error here if the AJAX request fails
-                            console.error(error);
-                        }
-                    });
+                $.ajax({
+                    url: "http://localhost/website/basket_sql.php",
+                    data: data,
+                    type: "POST",
+                    success: function(result) {
+                        var tbodyElement = document.getElementById("tbody");
+                        tbodyElement.innerHTML = "";
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error here if the AJAX request fails
+                        console.error(error);
+                    }
                 });
-            }
+            });
         </script>
 
 
