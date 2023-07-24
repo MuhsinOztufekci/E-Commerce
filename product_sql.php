@@ -1,43 +1,51 @@
 <?php
 require('db_connection.php');
 
+// Sanitize and validate user input
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $productSQL = new ProductSQL($conn);
 
-// // Ekleme komutu
+    if (isset($_POST['hidden'])) {
+        if ($_POST['hidden'] === 'add') {
+            $sku = $_POST['sku'];
+            $product_name = $_POST['product_name'];
+            $brand_name = $_POST['brand_name'];
+            $quantity = $_POST['quantity'];
+            $price = $_POST['price'];
 
-// if (isset($_POST['hidden']) == 'add') {
-//     $sku = $_POST['sku'];
-//     $product_name = $_POST['product_name'];
-//     $brand_name = $_POST['brand_name'];
-//     $quantity = $_POST['quantity'];
-//     $price = $_POST['price'];
+            $result = $productSQL->addProduct($sku, $product_name, $brand_name, $quantity, $price);
+            // Handle the result accordingly (e.g., display success or error message).
+        } elseif ($_POST['hidden'] === 'update') {
+            $product_id = $_POST['product_id'];
+            $product_name = $_POST['product_name'];
+            $brand_name = $_POST['brand_name'];
+            $quantity = $_POST['quantity'];
+            $price = $_POST['price'];
 
-//     addProduct($sku, $product_name, $brand_name, $quantity, $price);
-// }
-// if (isset($_POST['hidden']) === 'update') {
-//     $product_name = $_POST['product_name'];
-//     $brand_name = $_POST['brand_name'];
-//     $quantity = $_POST['quantity'];
-//     $price = $_POST['price'];
+            $result = $productSQL->updateProduct($product_id, $product_name, $brand_name, $quantity, $price);
+            // Handle the result accordingly (e.g., display success or error message).
+        } elseif ($_POST['hidden'] === 'delete') {
+            $product_id = $_POST['product_id'];
 
-//     updateProduct($product_name, $brand_name, $quantity, $price);
-// }
-// if (isset($_POST['hidden']) === 'delete') {
-//     $product_name = $_POST['product_name'];
-//     $brand_name = $_POST['brand_name'];
-//     $quantity = $_POST['quantity'];
-//     $price = $_POST['price'];
+            $result = $productSQL->deleteProduct($product_id);
+            // Handle the result accordingly (e.g., display success or error message).
+        }
+    }
+}
 
-//     deleteProduct($product_name, $brand_name, $quantity, $price);
-// }
-
-class productSQL
+class ProductSQL
 {
-    function addProduct($sku, $product_name, $brand_name, $quantity, $price)
-    {
-        global $conn;
-        $sql = "INSERT INTO products (sku, product_name, brand_name, quantity, price) VALUES (:sku ,:product_name, :brand_name, :quantity, :price)";
+    private $conn;
 
-        $stmt = $conn->prepare($sql);
+    public function __construct($conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function addProduct($sku, $product_name, $brand_name, $quantity, $price)
+    {
+        $sql = "INSERT INTO products (sku, product_name, brand_name, quantity, price) VALUES (:sku, :product_name, :brand_name, :quantity, :price)";
+        $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':sku', $sku);
         $stmt->bindParam(':product_name', $product_name);
         $stmt->bindParam(':brand_name', $brand_name);
@@ -45,44 +53,32 @@ class productSQL
         $stmt->bindParam(':price', $price);
 
         if ($stmt->execute()) {
-            echo "New product successfully added.";
-
-            header("Location: http://localhost/website/product_list.php");
+            return "New product successfully added.";
         } else {
-            echo "Error: " . $stmt->errorInfo()[2];
+            return "Error: " . $stmt->errorInfo()[2];
         }
     }
 
-    // Ürünü alma komutu
-
-    function getProduct($product_id)
+    public function getProduct($product_id)
     {
-        global $conn;
-
         $sql = "SELECT * FROM products WHERE product_id = :product_id";
-        $stmt = $conn->prepare($sql);
+        $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':product_id', $product_id);
         $stmt->execute();
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($result) {
-            echo "Product ID: " . $result['product_id'] . "<br>";
-            echo "Product Name: " . $result['product_name'] . "<br>";
-            echo "Brand Name: " . $result['brand_name'] . "<br>";
-            echo "Quantity: " . $result['quantity'] . "<br>";
-            echo "Price: " . $result['price'] . "<br>";
+            return $result;
         } else {
-            echo "No product found.";
+            return "No product found.";
         }
     }
 
-    function listProduct()
+    public function listProducts()
     {
-        global $conn;
-
         $sql = "SELECT * FROM products";
-        $stmt = $conn->prepare($sql);
+        $stmt = $this->conn->prepare($sql);
         $stmt->execute();
 
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -90,40 +86,33 @@ class productSQL
         return $result;
     }
 
-    // Güncelleme komutu
-
-    function updateProduct()
+    public function updateProduct($product_id, $product_name, $brand_name, $quantity, $price)
     {
-        global $conn;
-
         $sql = "UPDATE products SET product_name = :product_name, brand_name = :brand_name, quantity = :quantity, price = :price WHERE product_id = :product_id";
-        $stmt = $conn->prepare($sql);
+        $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':product_name', $product_name);
         $stmt->bindParam(':brand_name', $brand_name);
         $stmt->bindParam(':quantity', $quantity);
         $stmt->bindParam(':price', $price);
-
-        if ($stmt->execute()) {
-            echo "Product updated successfully.";
-        } else {
-            echo "Error: " . $stmt->errorInfo()[2];
-        }
-    }
-
-    // Silme komutu
-
-    function deleteProduct($product_id)
-    {
-        global $conn;
-
-        $sql = "DELETE FROM products WHERE product_id = :product_id";
-        $stmt = $conn->prepare($sql);
         $stmt->bindParam(':product_id', $product_id);
 
         if ($stmt->execute()) {
-            echo "Product deleted successfully.";
+            return "Product updated successfully.";
         } else {
-            echo "Error: " . $stmt->errorInfo()[2];
+            return "Error: " . $stmt->errorInfo()[2];
+        }
+    }
+
+    public function deleteProduct($product_id)
+    {
+        $sql = "DELETE FROM products WHERE product_id = :product_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':product_id', $product_id);
+
+        if ($stmt->execute()) {
+            return "Product deleted successfully.";
+        } else {
+            return "Error: " . $stmt->errorInfo()[2];
         }
     }
 }

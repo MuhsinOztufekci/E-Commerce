@@ -161,8 +161,8 @@
                 <tbody>
                     <?php
                     //Getting products from db  
-                    $productl = new productSQL();
-                    $products = $productl->listProduct();
+                    $productl = new ProductSQL($conn);
+                    $products = $productl->listProducts();
 
                     foreach ($products as $product) :
                     ?>
@@ -206,7 +206,7 @@
             </div>
 
         </div>
-        
+
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
         <script>
