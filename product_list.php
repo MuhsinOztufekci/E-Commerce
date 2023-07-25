@@ -4,10 +4,6 @@
 
 <head>
     <style>
-        /* styles.css */
-        /* styles.css */
-
-        /* General Styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -26,7 +22,7 @@
         /* Product List and Cart Containers */
         .product-list,
         .cart {
-            width: 48%;
+            flex: 1;
             border: 1px solid #ccc;
             padding: 20px;
             margin-bottom: 20px;
@@ -120,23 +116,24 @@
             margin-bottom: 15px;
         }
 
-        .total-cart-value {
-            text-align: center;
+        /* Total Cart Value and Confirm Cart Button */
+        .total-cart-container {
             margin-top: 20px;
-        }
-
-        .total-cart-value h2 {
-            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 18px;
         }
 
-        .total-cart-value #cartTotalValue {
+        .total-cart-value {
             font-weight: bold;
             color: #2196F3;
-            /* You can choose any color you prefer */
         }
 
-        /* Add more styles and media queries if needed */
+        .accept-basket {
+            background-color: #d32f2f;
+            text-align: right;
+        }
     </style>
 </head>
 
@@ -195,16 +192,15 @@
                         <th>Fiyat</th>
                         <th>Toplam Fiyat</th>
                         <th>İşlemler</th>
-
                     </tr>
                 </thead>
                 <tbody id="tbody"></tbody>
             </table>
 
-            <div class="total-cart-value">
-                <h2>Toplam Sepet Değeri: <span id="cartTotalValue">0</span></h2>
+            <div class="total-cart-container">
+                <h2 class="total-cart-value">Toplam Sepet Değeri: <span id="cartTotalValue">0</span></h2>
+                <button class="accept-basket" onclick="confirmCart()">Sepeti Onayla</button>
             </div>
-
         </div>
 
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -231,12 +227,25 @@
                             table += "<td>" + product.brand_name + "</td>";
                             table += "<td>" + product.basket_quantity + "</td>";
                             table += "<td>" + product.price + "</td>";
-                            table += "<td>" + products[i].total_price + "</td>";
+                            table += "<td class = 'totalprice'>" + products[i].total_price + "</td>";
                             table += "<td>" + "<button onclick='changeQuantity(" + products[i].id + ", -1)'>-</button>";
                             table += "<button onclick='changeQuantity(" + products[i].id + ", 1)'>+</button>" + "</td>";
                             table += "</tr>";
                         }
                         $('#tbody').append(table);
+
+                        // Toplam fiyat hesaplama
+                        var total = 0;
+
+                        var totalElements = document.getElementsByClassName('totalprice');
+
+                        for (var i = 0; i < totalElements.length; i++) {
+                            total += parseFloat(totalElements[i].textContent); // Tüm totalprice değerlerini toplayarak float tipine çeviriyoruz.
+                        }
+
+                        // Toplam fiyatı ekrana eklemek için belirtilen elementin innerHTML'ini güncelliyoruz.
+                        var insertCalculate = document.getElementById('cartTotalValue'); // 'totalCartValueId' toplam fiyatın ekleneceği elementin id'si olmalı
+                        insertCalculate.innerHTML = total;
                     },
 
                 });
@@ -259,6 +268,7 @@
                     success: function(result) {
                         var products = JSON.parse(result);
                         var table1 = "";
+                        var productPrice = 0;
 
                         for (var i = 0; i < products.length; i++) {
                             table1 += "<tr>";
@@ -266,14 +276,27 @@
                             table1 += "<td>" + products[i].brand_name + "</td>";
                             table1 += "<td>" + products[i].basket_quantity + "</td>";
                             table1 += "<td>" + products[i].price + "</td>";
-                            table1 += "<td>" + products[i].total_price + "</td>";
+                            table1 += "<td class = 'totalprice' >" + products[i].total_price + "</td>";
                             table1 += "<td>" + "<button onclick='changeQuantity(" + products[i].id + ", -1)'>-</button>";
                             table1 += "<button onclick='changeQuantity(" + products[i].id + ", 1)'>+</button>" + "</td>";
                             table1 += "</tr>";
-                        }
 
+                        }
                         var tbodyElement = document.getElementById("tbody");
                         tbodyElement.innerHTML = table1;
+
+                        // Toplam fiyat hesaplama
+                        var total = 0;
+
+                        var totalElements = document.getElementsByClassName('totalprice');
+
+                        for (var i = 0; i < totalElements.length; i++) {
+                            total += parseFloat(totalElements[i].innerHTML); // Tüm totalprice değerlerini toplayarak float tipine çeviriyoruz.
+                        }
+
+                        // Toplam fiyatı ekrana eklemek için belirtilen elementin innerHTML'ini güncelliyoruz.
+                        var insertCalculate = document.getElementById('cartTotalValue'); // 'totalCartValueId' toplam fiyatın ekleneceği elementin id'si olmalı
+                        insertCalculate.innerHTML = total;
                     }
                 });
             }
@@ -296,14 +319,20 @@
                     success: function(result) {
                         var tbodyElement = document.getElementById("tbody");
                         tbodyElement.innerHTML = "";
+
+                        var insertCalculate = document.getElementById('cartTotalValue'); // 'totalCartValueId' toplam fiyatın ekleneceği elementin id'si olmalı
+                        insertCalculate.innerHTML = "0";
                     },
                     error: function(xhr, status, error) {
                         // Handle error here if the AJAX request fails
                         console.error(error);
+
+                        // Eğer AJAX ile ilgili herhangi bir hata olursa console ekranına yazarak hatayı çözmemize yardımcı olur.
                     }
                 });
             });
         </script>
+
 
 
 
