@@ -213,6 +213,12 @@
             });
         });
     </script>
+
+    <script>
+        function confirmCart() {
+            window.location.href = "http://localhost/website/checkout.php";
+        }
+    </script>
 </body>
 
 </html>
