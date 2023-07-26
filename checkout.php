@@ -36,7 +36,6 @@
                 dataType: "text",
                 success: function(data) {
                     console.log(data);
-                    redi
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     console.error("Payment process failed.", errorThrown);
