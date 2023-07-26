@@ -35,6 +35,14 @@ if (!isset($_SESSION['isLoggedIn'])) header('Location: login.php');
             $auth->logout($email, $password);
         }
     }
+    if ($_GET["sayfa"]) {
+        $sayfa = $_GET["sayfa"];
+        if ($sayfa == "depolar") {
+            include("warehouse_list.php");
+        }
+    }
+
+
     ?>
 
 </body>
