@@ -4,11 +4,10 @@ require('db_connection.php');
 
 // Check if the request is a POST request
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Assuming you have a way to get the customer ID, for example, from session data or user input
-    $customerID = $_POST['customerID']; // Replace this with the actual customer ID
-    $grandTotal = 0; // You need to calculate the grand total from the basket items; initialize to 0.
+    $customerID = $_POST['customerID']; // We get customerID from session
+    $grandTotal = 0; // Calculating grand total
 
-    // Create an instance of the FinishedPayment class (assuming the class definition is in the same file)
+    // Create an instance of the FinishedPayment clas
     $finishedPayment = new FinishedPayment($conn);
 
     // Get products from the basket for the customer
@@ -36,6 +35,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $cleared = $finishedPayment->clearBasket($customerID);
 
     if ($cleared) {
+        // Send a response back to the JavaScript function
+        echo "Payment successful! Basket cleared.";
+    } else {
+        // Return an error response if the basket clearance failed
+        http_response_code(500); // Internal Server Error
+        echo "Payment successful, but basket clearance failed.";
+    }
+
+    $stockLower = $finishedPayment->lowerStockAmount($productID);
+    if ($stockLower) {
         // Send a response back to the JavaScript function
         echo "Payment successful! Basket cleared.";
     } else {
@@ -104,5 +113,16 @@ class FinishedPayment
             // Return false or handle the error if the deletion failed
             return false;
         }
+    }
+
+    public function lowerStockAmount($productID)
+    {
+        $quantity = "0";
+        $sql = "UPDATE products SET quantity = :quantity WHERE id = :product_id";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':product_id', $productID);
+        $stmt->bindParam(':quantity', $quantity);
+        $stmt->execute();
     }
 }
