@@ -10,7 +10,7 @@
             padding: 20px;
             background-color: #f2f2f2;
         }
-
+        
         h1 {
             margin-bottom: 20px;
             color: #333;
@@ -55,8 +55,8 @@
         </thead>
         <tbody>
             <?php
-            $products = listProduct();
-            $cartItems = ['Product A', 'Product C']; // Örnek olarak sepetinizdeki ürünlerin adlarını içeren bir dizi
+            // $products = listProduct();
+            // $cartItems = ['Product A', 'Product C']; // Örnek olarak sepetinizdeki ürünlerin adlarını içeren bir dizi
 
             foreach ($products as $product) {
                 $highlightClass = in_array($product['product_name'], $cartItems) ? 'highlight' : '';
