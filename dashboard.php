@@ -1,6 +1,7 @@
 <?php
 session_start();
 require("../website/include/header.php");
+include("include/footer.php");
 
 // Check if the user is logged in
 if (!isset($_SESSION['isLoggedIn'])) header('Location: login.php');
@@ -38,7 +39,7 @@ if (!isset($_SESSION['isLoggedIn'])) header('Location: login.php');
     if ($_GET["sayfa"]) {
         $sayfa = $_GET["sayfa"];
         if ($sayfa == "depolar") {
-            include("warehouse_list.php");
+            include("warehouses/views/warehouse_list.php");
         }
     }
 
@@ -46,5 +47,7 @@ if (!isset($_SESSION['isLoggedIn'])) header('Location: login.php');
     ?>
 
 </body>
+
+
 
 </html>
