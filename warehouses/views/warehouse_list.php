@@ -65,7 +65,7 @@ $warehouses = $warehouseModel->listwarehouse();
 <body>
     <h1>Depolar</h1>
 
-    <p><a href="warehouse_add.php"><b>Yeni Depo Oluştur</b></a></p>
+    <p><a href="http://localhost/website/warehouses/views/warehouse_add.php"><b>Yeni Depo Oluştur</b></a></p>
 
     <div class="table-responsive">
         <table>
@@ -83,33 +83,21 @@ $warehouses = $warehouseModel->listwarehouse();
                         <td><?php echo $warehouseItem['warehouse_name']; ?></td>
                         <td><?php echo $warehouseItem['daily_order_limit']; ?></td>
                         <td><?php echo $warehouseItem['priority_value']; ?></td>
-                        <td><button onclick="changeQuantity(<?php echo $warehouseItem['id']; ?>)">Sepete Ekle</button></td>
+                        <td><button onclick="redirect(<?php echo $warehouseItem['id']; ?>)">Stok Listeleme</button></td>
                     </tr>
                 <?php } ?>
             </tbody>
         </table>
     </div>
 
-    <!-- Gerekli JavaScript kütüphaneleri -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-
     <!-- AJAX ile sepetteki ürün adetini güncelle -->
     <script>
-        function changeQuantity(wareHouseId) {
-            var data = {
-                wareHouseId: wareHouseId,
-            };
-            $.ajax({
-                url: "http://localhost/website/basket_sql.php",
-                data: data,
-                type: "POST",
-                success: function(result) {
-                    alert(result);
-                },
-                error: function(xhr, status, error) {
-                    console.error("An error occurred: " + error);
-                }
-            });
+        function redirect(warehouseId) {
+            // Construct the URL with the warehouseId parameter
+            var url = "http://localhost/website/warehouses/views/product_list.php?warehouseId=" + warehouseId;
+
+            // Redirect to the new URL
+            window.location.href = url;
         }
     </script>
 </body>
