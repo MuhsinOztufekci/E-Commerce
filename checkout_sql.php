@@ -7,11 +7,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $customerID = $_POST['customerID']; // We get customerID from session
     $grandTotal = 0; // Calculating grand total
 
-    // Create an instance of the FinishedPayment clas
+    // Create an instance of the FinishedPayment class
     $finishedPayment = new FinishedPayment($conn);
 
     // Get products from the basket for the customer
     $products = $finishedPayment->getProductsFromBasket($customerID);
+
+    // Check if there are products in the basket
+    if (empty($products)) {
+        http_response_code(400); // Bad Request
+        echo "Basket is empty. Payment cannot be processed.";
+        exit;
+    }
 
     // Iterate through the products and calculate the grand total
     foreach ($products as $product) {
@@ -29,22 +36,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $productID = $product["id"];
         $quantity = $product["basket_quantity"];
         $finishedPayment->addOrderDetailsTable($orderID, $productID, $quantity);
+
+        $finishedPayment->lowerStockAmount($productID, $quantity);
     }
+
 
     // Clear the user's basket after completing the payment process
     $cleared = $finishedPayment->clearBasket($customerID);
 
     if ($cleared) {
-        // Send a response back to the JavaScript function
-        echo "Payment successful! Basket cleared.";
-    } else {
-        // Return an error response if the basket clearance failed
-        http_response_code(500); // Internal Server Error
-        echo "Payment successful, but basket clearance failed.";
-    }
-
-    $stockLower = $finishedPayment->lowerStockAmount($productID);
-    if ($stockLower) {
         // Send a response back to the JavaScript function
         echo "Payment successful! Basket cleared.";
     } else {
@@ -106,23 +106,21 @@ class FinishedPayment
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':customer_id', $customerID);
 
-        if ($stmt->execute()) {
-            // Return true if the deletion was successful
-            return true;
-        } else {
-            // Return false or handle the error if the deletion failed
-            return false;
-        }
+        return $stmt->execute();
     }
 
-    public function lowerStockAmount($productID)
+    public function lowerStockAmount($productID, $quantity)
     {
-        $quantity = "0";
-        $sql = "UPDATE products SET quantity = :quantity WHERE id = :product_id";
+        $sql = "UPDATE products SET quantity = (quantity - :quantity) WHERE id = :product_id";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':product_id', $productID);
-        $stmt->bindParam(':quantity', $quantity);
-        $stmt->execute();
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':product_id', $productID);
+            $stmt->bindParam(':quantity', $quantity);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            // Handle the error here or log it
+            return false;
+        }
     }
 }

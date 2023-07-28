@@ -2,5 +2,5 @@
 
 interface ProductListInterface
 {
-    public function wareHouseProductList($warehouse_id);
+    public function getAllProducts($warehouseId);
 }
