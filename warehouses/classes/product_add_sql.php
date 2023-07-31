@@ -106,7 +106,7 @@ class ProductAdd implements ProductAddInterface
         }
 
         // Update the total stock quantity in the `product` table by adding the new stock value to the existing quantity
-        $sqlUpdateProduct = "UPDATE products SET quantity = :new_stock WHERE id = :product_id"; // Corrected the table name here
+        $sqlUpdateProduct = "UPDATE products SET quantity = :new_stock WHERE id = :product_id"; 
         $stmtUpdateProduct = $this->conn->prepare($sqlUpdateProduct);
         $stmtUpdateProduct->bindParam(':new_stock', $productNewStock);
         $stmtUpdateProduct->bindParam(':product_id', $productId);
