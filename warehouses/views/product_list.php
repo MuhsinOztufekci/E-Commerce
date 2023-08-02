@@ -26,7 +26,7 @@ if (isset($_GET['warehouseId'])) {
 
 <head>
     <style>
-        /* Reset default styles for margin and padding */
+         /* Reset default styles for margin and padding */
         body,
         h1,
         h2,
@@ -62,6 +62,7 @@ if (isset($_GET['warehouseId'])) {
 
         .cart-heading {
             color: #333;
+            font-size: 24px;
             border-bottom: 1px solid #ccc;
             padding-bottom: 10px;
             margin-bottom: 20px;
@@ -88,6 +89,7 @@ if (isset($_GET['warehouseId'])) {
 
         tbody tr:hover {
             background-color: #f5f5f5;
+            cursor: pointer;
         }
 
         th {
@@ -98,6 +100,32 @@ if (isset($_GET['warehouseId'])) {
         td {
             color: #444;
         }
+
+        /* Input style */
+        .form input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            width: 80px;
+            margin-right: 5px;
+        }
+
+        /* Submit button style */
+        .form button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form button:hover {
+            background-color: #2980b9;
+        }
+
 
         /* Make the table responsive for smaller screens */
         @media screen and (max-width: 600px) {
@@ -111,8 +139,38 @@ if (isset($_GET['warehouseId'])) {
             }
 
             .cart-heading {
-                font-size: 18px;
+                font-size: 20px;
             }
+
+            /* Form alignment */
+            .form {
+                display: flex;
+                align-items: center;
+            }
+
+        }
+
+        /* Button style */
+        .form button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form button:hover {
+            background-color: #2980b9;
+        }
+
+        /* No products message style */
+        .no-products {
+            color: #666;
+            font-size: 18px;
+            text-align: center;
+            margin-top: 30px;
         }
     </style>
 </head>
