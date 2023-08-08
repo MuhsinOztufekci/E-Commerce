@@ -34,7 +34,7 @@ class WarehouseModel
         // Check total warehouse count
         $totalCount = $this->howManyWareHouse();
         // System can have n warehouse
-        $maxWarehouseCount = 3; // Maximum warehouse count
+        $maxWarehouseCount = 4; // Maximum warehouse count
         if ($totalCount >= $maxWarehouseCount) {
             return 'Too many warehouses. The operation has been canceled.';
         }
@@ -80,7 +80,7 @@ class WarehouseModel
 
     public function listWareHouse()
     {
-        $query = "SELECT * FROM " . $this->table;
+        $query = "SELECT * FROM warehouse ORDER BY priority_value";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
