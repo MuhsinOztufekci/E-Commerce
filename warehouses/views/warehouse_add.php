@@ -75,7 +75,7 @@
 <body>
     <div class="container">
         <h1>Warehouse Registration</h1>
-        <form method="POST" action="warehouse_sql.php">
+        <form method="POST" action="../../warehouse_sql.php">
             <input type="text" name="warehouse_name" placeholder="Warehouse Name" required>
             <input type="number" name="daily_order_limit" placeholder="Daily Order Limit" required>
             <input type="number" name="priority_value" placeholder="Priority Value" required>
