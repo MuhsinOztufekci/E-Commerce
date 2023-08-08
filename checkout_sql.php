@@ -1,6 +1,7 @@
 <?php
 session_start();
 require('db_connection.php');
+require('warehouses/classes/warehouse_managment_sql.php');
 
 interface PaymentGatewayInterface
 {
@@ -45,6 +46,14 @@ class PaymentManager
 
         $cleared = $this->clearBasket($customerID);
 
+        $warehouse = new WarehouseManager($this->conn);
+        $result = $warehouse->handle($orderID);
+
+        print_r($result) ;
+
+        die();
+
+
         return $cleared && $this->paymentGateway->processPayment($customerID);
     }
     private function getProductsFromBasket($customerID)
@@ -74,6 +83,7 @@ class PaymentManager
 
     private function addOrderDetails($orderID, $productID, $quantity)
     {
+
         if (is_array($quantity)) {
             foreach ($quantity as $qty) {
                 for ($i = 0; $i < $qty; $i++) {
@@ -129,6 +139,7 @@ class YourPaymentGateway implements PaymentGatewayInterface
         // Also, handle the error message if necessary
         // For example:
         // $errorMessage = "Payment failed: Invalid credit card number."
+
         return true;
     }
 }
