@@ -18,24 +18,24 @@ class WarehouseManager
 
         //Ürünler ve depoları kontrol için döner sonuçlarını associative array olarak döner.
         $checkedProducts = $this->firstControl($basketProducts, $warehouseDetails);
-        print_r($checkedProducts);
+        // print_r($checkedProducts);
 
         // Hangi depoda daha fazla ürün bulunuyor sayıları toplayarak geri döner.
         $countTrue = $this->arrayFilter($checkedProducts);
-        print_r($countTrue);
+        // print_r($countTrue);
 
         // Öncelik değerine göre ve  sıralanmış depoları geri döner.
         $result = $this->sortedArray($countTrue);
 
         // sortedArray fonkisonundan geri dönen arrayin en üstteki değerini alır.
         $chosenWareHouse = key($result);
-        echo "Key";
-        echo "</br>";
-        print_r($chosenWareHouse);
+        // echo "Key";
+        // echo "</br>";
+        // print_r($chosenWareHouse);
 
         // En yüksek depodan update atıldı atılamayan ürünler arrayde tutuldu.
         $remainBasketProducts = $this->actionControl($basketProducts, $chosenWareHouse, $orderId);
-        echo "burası remain basket";
+        // echo "burası remain basket";
 
         if (empty($remainBasketProducts)) {
             echo "Bütün ürünler başarıyla dağıtıldı.";
@@ -43,7 +43,7 @@ class WarehouseManager
         }
         // Buraya kadar tamam.
         // Tekrar hangi depolarda hangi ürünler var fonksiyonuna attık.
-        $secondChecked = $this->secondControl($remainBasketProducts, $warehouseDetails);
+        $secondChecked = $this->firstControl($remainBasketProducts, $warehouseDetails);
 
         $secondCountTrue = $this->arrayFilter($secondChecked);
 
@@ -74,17 +74,17 @@ class WarehouseManager
             $stock = $this->stockChecker($warehouseId, $productId);
 
             if ($stock >= 1) {
-                echo "<br>";
-                echo "if";
-                //echo "$key";
-                echo "</br>";
+                // echo "<br>";
+                // echo "if";
+                // echo "$key";
+                // echo "</br>";
                 $this->updateWarehouseInfo($warehouseId, $productId, $orderId);
                 $this->stockDelete($warehouseId, $productId, $orderId);
             } else {
-                echo "</br>";
-                echo "else";
-                echo "$productId";
-                echo "</br>";
+                // echo "</br>";
+                // echo "else";
+                // echo "$productId";
+                // echo "</br>";
                 $remainBasketProducts[$key]['product_id'] = $productId;
                 $remainBasketProducts[$key]['quantity'] = $productQuantity;
                 print_r($remainBasketProducts);
@@ -101,29 +101,6 @@ class WarehouseManager
             $warehouseId = $warehouse['id'];
 
             foreach ($basketProducts as $key => $product) {
-                $productId = $product['product_id'];
-                $productQuantity = $product['quantity'];
-                $stock = $this->stockChecker($warehouseId, $productId);
-
-                if ($stock >= 1) {
-                    $checkedProducts[$warehouseId][$key][$productId] = true;
-                } else {
-                    $checkedProducts[$warehouseId][$key][$productId] = false;
-                }
-            }
-        }
-
-        return $checkedProducts;
-    }
-
-    public function secondControl($remainBasketProducts, $warehouseDetails)
-    {
-        $checkedProducts = array();
-
-        foreach ($warehouseDetails as $warehouse) {
-            $warehouseId = $warehouse['id'];
-
-            foreach ($remainBasketProducts as $key => $product) {
                 $productId = $product['product_id'];
                 $productQuantity = $product['quantity'];
                 $stock = $this->stockChecker($warehouseId, $productId);
@@ -175,7 +152,6 @@ class WarehouseManager
 
         return $tempArray;
     }
-
 
     public function stockChecker($warehouseId, $productId)
     {
