@@ -59,9 +59,10 @@ class ProductAdd implements ProductAddInterface
         $stmt->bindParam(':product_id', $productId);
         $stmt->bindParam(':warehouse_id', $warehouseId);
 
+        // Execute the query and fetch the result
         if ($stmt->execute()) {
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($result !== false) {
+            if ($result) {
                 $currentStock = $result['stock'];
             } else {
                 $this->createStockRecord($productId, $warehouseId, $currentStock);
@@ -72,6 +73,7 @@ class ProductAdd implements ProductAddInterface
 
         return $currentStock;
     }
+
 
     private function getProductCurrentStock($productId)
     {
@@ -106,7 +108,7 @@ class ProductAdd implements ProductAddInterface
         }
 
         // Update the total stock quantity in the `product` table by adding the new stock value to the existing quantity
-        $sqlUpdateProduct = "UPDATE products SET quantity = :new_stock WHERE id = :product_id"; 
+        $sqlUpdateProduct = "UPDATE products SET quantity = :new_stock WHERE id = :product_id";
         $stmtUpdateProduct = $this->conn->prepare($sqlUpdateProduct);
         $stmtUpdateProduct->bindParam(':new_stock', $productNewStock);
         $stmtUpdateProduct->bindParam(':product_id', $productId);
