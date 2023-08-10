@@ -77,9 +77,12 @@ class BasketSQL
         // Get basket item if it exists
         $basketItem = $this->getBasketItem($customerID, $productID);
         if (!$basketItem) {
-            // Basket item does not exist, insert a new row for the product
-            $this->insertBasket($customerID, $productID, $productPrice);
-            return true;
+            if ($productQuantity == 0) {
+                return false;
+            } else {  // Basket item does not exist, insert a new row for the product
+                $this->insertBasket($customerID, $productID, $productPrice);
+                return true;
+            }
         } else {
             $currentQuantity = $basketItem['basket_quantity']; // Fetch the current quantity from the basketItem
 
