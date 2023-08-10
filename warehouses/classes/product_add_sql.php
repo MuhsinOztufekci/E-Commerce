@@ -30,8 +30,19 @@ class ProductAdd implements ProductAddInterface
             // Update the stock quantity in the database
             $this->updateStockQuantity($productId, $warehouseId, $wareHouseNewStock, $productNewStock);
 
+
+            // Create an associative array to store the stock values
+            $array = [
+                'wareHouseNewStock' => $wareHouseNewStock,
+                'productNewStock' => $productNewStock
+            ];
+
+            // Convert the array to a JSON-encoded string
+            $jsonString = json_encode($array);
+
             $this->conn->commit();
-            return $wareHouseNewStock; // Return the updated stock quantity
+
+            return $jsonString;
         } catch (Exception $e) {
             $this->conn->rollBack();
             throw new Exception("An error occurred: " . $e->getMessage());

@@ -26,7 +26,7 @@ if (isset($_GET['warehouseId'])) {
 
 <head>
     <style>
-         /* Reset default styles for margin and padding */
+        /* Reset default styles for margin and padding */
         body,
         h1,
         h2,
@@ -201,7 +201,7 @@ if (isset($_GET['warehouseId'])) {
                             <td><?php echo $product['id'] ?></td>
                             <td><?php echo $product['product_name'] ?></td>
                             <td><?php echo $product['brand_name'] ?></td>
-                            <td><?php echo $product['total_stock'] ?></td>
+                            <td id="totalStock-<?php echo $product['id'] ?>"><?php echo $product['total_stock'] ?></td>
                             <td id="stock-<?php echo $product['id'] ?>"><?php echo $product['stock'] ?></td>
                             <td>
                                 <form class="form" data-product-id="<?php echo $product['id'] ?>">
@@ -223,7 +223,7 @@ if (isset($_GET['warehouseId'])) {
 <script>
     $(document).ready(function() {
         $(".form").submit(function(event) {
-            event.preventDefault(); // Prevent form submission
+            event.preventDefault();
 
             var form = $(this);
             var addQuantity = form.find('input[name="add_quantity"]').val();
@@ -237,17 +237,26 @@ if (isset($_GET['warehouseId'])) {
             };
 
             $.ajax({
-                url: "../classes/product_add_sql.php", // Correct the AJAX URL if needed
+                url: "../classes/product_add_sql.php",
                 data: data,
                 type: "POST",
+                dataType: "json",
                 success: function(result) {
-                    // Update the stock for the specific product in the table
-                    $("#stock-" + productId).text(result);
+                    // Decode the JSON response
+                    var decodedArray = result;
+
+                    // Display the decoded JSON in an alert (for debugging)
+                    //alert(JSON.stringify(decodedArray));
+
+                    // Update stock information on the webpage
+                    $("#stock-" + productId).text(decodedArray.wareHouseNewStock);
+                    $("#totalStock-" + productId).text(decodedArray.productNewStock);
                 },
                 error: function(xhr, status, error) {
                     console.log("AJAX Error: " + error);
                 }
             });
+
         });
     });
 </script>
