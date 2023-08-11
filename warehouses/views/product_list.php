@@ -241,14 +241,9 @@ if (isset($_GET['warehouseId'])) {
                 data: data,
                 type: "POST",
                 dataType: "json",
-                success: function(result) {
-                    // Decode the JSON response
+                success: function(result) {  
                     var decodedArray = result;
-
-                    // Display the decoded JSON in an alert (for debugging)
                     //alert(JSON.stringify(decodedArray));
-
-                    // Update stock information on the webpage
                     $("#stock-" + productId).text(decodedArray.wareHouseNewStock);
                     $("#totalStock-" + productId).text(decodedArray.productNewStock);
                 },
