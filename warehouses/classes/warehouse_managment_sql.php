@@ -147,6 +147,9 @@ class WarehouseManager
 
         echo "Dizi:<br>";
         arsort($tempArray);
+        echo "CountTrue";
+        print_r($countTrue);
+        echo "Temp Array";
         print_r($tempArray);
 
 
