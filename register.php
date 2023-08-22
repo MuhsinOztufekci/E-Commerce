@@ -91,7 +91,7 @@ include("auth.php");
 
             <input type="submit" value="Register">
         </form>
-        <p>Üye girişi için buraya  <a href="login.php">Giriş yap.</a></p>
+        <p>Üye girişi için buraya <a href="login.php">Giriş yap.</a></p>
     </div>
     <?php
 

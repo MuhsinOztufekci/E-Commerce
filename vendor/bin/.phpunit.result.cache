@@ -1,1 +1,1 @@
-{"version":1,"defects":{"WarehouseTest::testFailure":7,"WarehouseTest::testWareHouse":7},"times":{"WarehouseTest::testFailure":0.029,"WarehouseTest::testWareHouse":0.298}}
+{"version":1,"defects":{"WarehouseTest::testFailure":7,"WarehouseTest::testWareHouse":7},"times":{"WarehouseTest::testFailure":0.029,"WarehouseTest::testWareHouse":0.495}}

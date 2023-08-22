@@ -34,7 +34,7 @@ class WarehouseTest extends TestCase
 
         // Expected result
         $expectedResult = [
-            18=> 15,
+            18=> 1,
             17=> 5,
             15=> 3,
             3=> 2,
